@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="arrayIndex">
+        <item>@array/Q1</item>
+        <item>@array/Q2</item>
+        <item>@array/Q3</item>
+        <item>@array/Q4</item>
+        <item>@array/Q5</item>
+    </array>
+    <string-array
+        name="Q1">
+        <item>Know Your Layouts</item>
+        <item>Which of these layouts doesn\'t exist?</item>
+        <item>Quantum Layout</item>
+        <item>Linear Layout</item>
+        <item>Constraint Layout</item>
+    </string-array>
+    <string-array
+        name="Q2">
+        <item>Getting Active</item>
+        <item>What needs to be created in order to start a new activity?</item>
+        <item>Intent</item>
+        <item>Drawable resource</item>
+        <item>Intention</item>
+    </string-array>
+    <string-array
+        name="Q3">
+        <item>Linear Layouts</item>
+        <item>Which value is responsible for setting the size of the children of a linear layout?</item>
+        <item>Weight</item>
+        <item>Gravity</item>
+        <item>Alignment</item>
+    </string-array>
+    <string-array
+        name="Q4">
+        <item>What\'s in a name</item>
+        <item>What is the correct naming case for android activities?</item>
+        <item>PascalCase</item>
+        <item>camelCase</item>
+        <item>snake_case</item>
+    </string-array>
+    <string-array
+        name="Q5">
+        <item>Passing values between activities</item>
+        <item>Intents are used to pass values between activities. Which function is used to add values to an intent?</item>
+        <item>putExtra()</item>
+        <item>addExtra()</item>
+        <item>putValue()</item>
+    </string-array>
+</resources>
