@@ -33,13 +33,14 @@ public class EndQuizActivity extends AppCompatActivity {
         Integer score = intent.getIntExtra("score", -1);
 
         // Setting name and score text fields
-        congratulationsTextView.setText("Congratulations " + playerName);
+        congratulationsTextView.setText("Congratulations " + playerName + "!");
         scoreTextView.setText(score.toString() + "/5");
 
         // Set button onclicks
         newQuizButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 finish();
             }
         });

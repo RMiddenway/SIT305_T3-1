@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -22,7 +23,15 @@ public class QuestionActivity extends AppCompatActivity {
 
     private Button[] answerButtons;
     private Integer currentAnswer;
-    private Integer correctAnswer = 0; // TODO SET THIS IF RANDOMISED BUTTONS
+    private Integer correctAnswer = 0;
+
+    TextView welcomeTextView;
+    ProgressBar progressBar;
+    TextView questionNumberTextView;
+
+    private TextView questionTitle;
+    private TextView questionText;
+
     Button submitButton;
     Button nextButton;
 
@@ -47,9 +56,9 @@ public class QuestionActivity extends AppCompatActivity {
         questionNumber = receivedIntent.getIntExtra("questionNo", -1);
         score = receivedIntent.getIntExtra("score", -1);
 
-        TextView welcomeTextView = findViewById(R.id.welcomeTextView);
-        ProgressBar progressBar = findViewById(R.id.progressBar);
-        TextView questionNumberTextView = findViewById(R.id.questionNumberTextView);
+        welcomeTextView = findViewById(R.id.welcomeTextView);
+        progressBar = findViewById(R.id.progressBar);
+        questionNumberTextView = findViewById(R.id.questionNumberTextView);
 
         // Getting current question number from intent - if it's question 1 display the welcome message
         // Otherwise, display the progress bar
@@ -58,46 +67,72 @@ public class QuestionActivity extends AppCompatActivity {
 
         }
 
-        if(questionNumber == 1) {
-            playerName = receivedIntent.getStringExtra("name").toString();
+        else if(questionNumber == 1) {
+            playerName = receivedIntent.getStringExtra("name");
             welcomeTextView.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
             welcomeTextView.setText("Welcome " + playerName + "!");
+
+            // On first QuestionActivity, return player name to MainActivity
+//            Intent returnIntent = new Intent();
+//            returnIntent.putExtra("name", playerName);
+//            setResult(RESULT_OK, returnIntent);
         }
         else {
-            welcomeTextView.setVisibility(View.GONE);
-            progressBar.setVisibility(View.VISIBLE);
+
         }
 
-        // Set progress bar and X/5 TextView
-        progressBar.setProgress(questionNumber);
-        questionNumberTextView.setText(questionNumber.toString() + "/5");
+
+        // Get question title and text
+        questionTitle = findViewById(R.id.questionTitleTextView);
+        questionText = findViewById(R.id.questionTextView);
+
+        // Get question buttons
+        answerButtons = new Button[]{findViewById(R.id.answer1Button), findViewById(R.id.answer2Button), findViewById(R.id.answer3Button)};
+
+        // Get navigation buuttons
+        submitButton = findViewById(R.id.submitButton);
+        nextButton = findViewById(R.id.nextButton);
+
+        // Call function to initialise question based on current question number
+        initialiseQuestion();
+
+        submitButton = findViewById(R.id.submitButton);
+        nextButton = findViewById(R.id.nextButton);
+
+    }
+    private void initialiseQuestion() {
 
         // Get id for current question array
         Resources res = getResources();
         TypedArray index = res.obtainTypedArray(R.array.arrayIndex);
         Integer id = index.getResourceId(questionNumber - 1, -1);
 
-        //Get current question array
+        //Get current question array | 0: Title, 1: Question, 2: Correct Answer, 3: Wrong Answer, 4: Wrong Answer
+        //TODO - randomise order so correct answer isn't always first
         String[] questionData = getResources().getStringArray(id);
-
-        // Get question title and text
-        TextView questionTitle = findViewById(R.id.questionTitleTextView);
-        TextView questionText = findViewById(R.id.questionTextView);
-
-        // Get question buttons
-        answerButtons = new Button[]{findViewById(R.id.answer1Button), findViewById(R.id.answer2Button), findViewById(R.id.answer3Button)};
 
         // Set text for question title, text and answer buttons
         questionTitle.setText(questionData[0]);
         questionText.setText(questionData[1]);
-        answerButtons[0].setText(questionData[2]);
-        answerButtons[1].setText(questionData[3]);
-        answerButtons[2].setText(questionData[4]);
 
-        submitButton = findViewById(R.id.submitButton);
-        nextButton = findViewById(R.id.nextButton);
+        for(int i = 0; i < 3; i++) {
+            answerButtons[i].setBackgroundColor(Color.WHITE);
+            answerButtons[i].setText(questionData[i + 2]);
+            answerButtons[i].setClickable(true);
+        }
+        progressBar.setProgress(questionNumber);
+        questionNumberTextView.setText(questionNumber.toString() + "/5");
 
+        // Hide next button and show submit button
+        submitButton.setVisibility(View.VISIBLE);
+        nextButton.setVisibility(View.GONE);
+
+        // Hide welcome message after first question
+        if(questionNumber > 1) {
+            welcomeTextView.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+        }
     }
     public void selectAnswer(View view) {
         // Highlights current answer and stores tag associated with it
@@ -110,44 +145,48 @@ public class QuestionActivity extends AppCompatActivity {
     }
 
     public void submitAnswer(View view) {
-        // Disable buttons
-        for(int i = 0; i < 3; i++) {
-            answerButtons[i].setClickable(false);
+        if(currentAnswer== null) {
+            Toast.makeText(this, "Please select an answer", Toast.LENGTH_LONG).show();
         }
-        // If correct, highlight correct answer green
-        if(currentAnswer == correctAnswer) {
-            answerButtons[currentAnswer].setBackgroundColor(Color.GREEN);
-            score = score + 1;
-        }
-        // If incorrect, highlight correct answer green and selected answer red
         else {
-            answerButtons[currentAnswer].setBackgroundColor(Color.RED);
-            answerButtons[correctAnswer].setBackgroundColor(Color.GREEN);
+            // Disable buttons
+            for (int i = 0; i < 3; i++) {
+                answerButtons[i].setClickable(false);
+            }
+            // If correct, highlight correct answer green
+            if (currentAnswer == correctAnswer) {
+                answerButtons[currentAnswer].setBackgroundColor(Color.GREEN);
+                score = score + 1;
+            }
+            // If incorrect, highlight correct answer green and selected answer red
+            else {
+                answerButtons[currentAnswer].setBackgroundColor(Color.RED);
+                answerButtons[correctAnswer].setBackgroundColor(Color.GREEN);
+            }
+            // Hide submit button, show next button
+            submitButton.setVisibility(View.GONE);
+            nextButton.setVisibility(View.VISIBLE);
         }
-        // Hide submit button, show next button
-        submitButton.setVisibility(View.GONE);
-        nextButton.setVisibility(View.VISIBLE);
+        questionNumber = questionNumber + 1;
     }
 
     public void nextQuestion(View view) {
+        //TODO - make next question load without restarting activity
 
-        if(questionNumber < 5) {
-            Intent nextIntent = new Intent(getApplicationContext(), QuestionActivity.class);
-            nextIntent.putExtra("name", playerName);
-            nextIntent.putExtra("questionNo", questionNumber + 1);
-            nextIntent.putExtra("score", score);
-            startActivity(nextIntent);
-            finish();
+        if(questionNumber <= 5) {
+            initialiseQuestion();
+
         }
         else {
-            // Returning player name to Main Activity
+            // Return player name to MainActivity
             Intent returnIntent = new Intent();
             returnIntent.putExtra("name", playerName);
             setResult(RESULT_OK, returnIntent);
 
+
             // Starting result screen activity
             Intent nextIntent = new Intent(getApplicationContext(), EndQuizActivity.class);
-//            nextIntent.putExtra("name", playerName);
+            nextIntent.putExtra("name", playerName);
             nextIntent.putExtra("score", score);
             startActivity(nextIntent);
             finish();

@@ -34,7 +34,7 @@
     <string-array
         name="Q4">
         <item>What\'s in a name</item>
-        <item>What is the correct naming case for android activities?</item>
+        <item>Naming conventions are important in development. What is the correct naming case for android activities?</item>
         <item>PascalCase</item>
         <item>camelCase</item>
         <item>snake_case</item>
